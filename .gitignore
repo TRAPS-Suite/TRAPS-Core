@@ -1,0 +1,6 @@
+*.sif
+*.nextflow.log*
+*.csv
+workflow/results/
+workflow/.nextflow/
+.nextflow/

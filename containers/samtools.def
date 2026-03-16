@@ -1,0 +1,25 @@
+# ===================================
+# samtools Apptainer Build Script
+# Author: Henry Sommer | Cross Lab
+# Institution: UNMC
+# Created: 2026/02/19
+# ===================================
+
+Bootstrap: docker
+From: ubuntu:22.04
+
+%post
+    apt-get -y update
+    apt-get -y install wget build-essential bzip2 tar zlib1g-dev libbz2-dev liblzma-dev libcurl4-gnutls-dev libncurses-dev libdeflate-dev
+    cd /opt
+    wget https://github.com/samtools/samtools/releases/download/1.23/samtools-1.23.tar.bz2
+    tar -xjf samtools-1.23.tar.bz2
+    cd samtools-1.23
+    ./configure --without-curses
+    make
+    make install
+
+
+
+%environment
+    export PATH="/usr/local/bin:$PATH"

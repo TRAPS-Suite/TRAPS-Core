@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+# Accept two inputs
+
+inputbam=""
+verboseopt=false
+
+# Process flags using getopts
+while getopts "u:v" flag; do
+    case "${flag}" in
+        u) # The 'u' option requires an argument, which is stored in $OPTARG
+            inputbam=${OPTARG}
+            ;;
+        v)
+            verboseopt = true
+            ;;
+        *) # Handle invalid options
+            echo "Invalid option: -${OPTARG}" >&2
+            exit 1
+            ;;
+    esac
+done
+
+echo "Getting list of genomes from BAM"
+TARGET_LIST="Targets that Will Be Remapped"
+
+samtools idxstats $inputbam | awk '{print $1}' | head -n -1 | while read ref; do
+    echo "Processing reference: $ref"
+    # $ref is the name of the genome accession
+
+    COVERAGE=$(samtools depth -a -r $ref $inputbam | \
+    awk '{total++; if($3>=5) covered++} END {if(total>0) print (covered/total)*100 "%"; else print "0%"}')
+
+    # Remove % and keep only integer part
+    COVERAGE_INT="${COVERAGE%\%}"    # strip %
+    COVERAGE_INT="${COVERAGE_INT%%.*}"  # remove decimal part
+
+    echo "Coverage(>5x): $COVERAGE"
+
+    MEAN_DEPTH=$(samtools depth -a -r $ref $inputbam | \
+    awk '{sum+=$3; count++} END {if(count>0) print sum/count; else print 0}')
+    
+    MEAN_DEPTH_INT="${MEAN_DEPTH%%.*}"  # remove decimal part
+
+    echo "Mean depth: $MEAN_DEPTH bases"
+
+    if [[ $COVERAGE_INT -ge 55 && $MEAN_DEPTH_INT -ge 15 ]]; then
+        echo ""
+        echo "Will be added"
+        echo ""
+        TARGET_LIST+=$'\n'$ref
+    else
+        echo ""
+        echo "Under threshold. Will NOT be added."
+        echo ""
+    fi
+
+done
