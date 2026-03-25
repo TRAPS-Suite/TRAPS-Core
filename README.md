@@ -60,6 +60,6 @@ nextflow run main.nf \
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `--genome` | `GRCh38` | Reference genome |
 | `--max_cpus` | `16` | Max CPUs per process |
 | `--max_memory` | `128.GB` | Max memory per process |
+| `--min_depth` | `5` | Minimum depth for a position to not be masked |
