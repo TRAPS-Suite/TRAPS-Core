@@ -22,6 +22,8 @@ A Nextflow pipeline for processing hybrid capture sequencing data to align and a
 ---
 
 ## Installation
+> [!IMPORTANT]
+> This pipeline is not ready for download yet.
 ```bash
 git clone https://github.com/henry-j-sommer/TRAP-Seq.git
 cd trap-seq
@@ -56,9 +58,8 @@ All reads should be in the directory that you pass as `--indir`.
 ## Usage
 ```bash
 nextflow run main.nf \
-  --input samplesheet.csv \
+  --indir output_dir \
   --outdir results \
-  -profile docker
 ```
 
 ### Required arguments
@@ -72,7 +73,5 @@ nextflow run main.nf \
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `--max_cpus` | `16` | Max CPUs per process |
-| `--max_memory` | `128.GB` | Max memory per process |
 | `--min_depth` | `5` | Minimum depth for a position to not be masked |
 | `--merge_lanes` | false | Merge lanes before proceeding with the pipeline |
