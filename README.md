@@ -29,6 +29,18 @@ cd trap-seq
 
 ---
 
+
+## Input
+
+Reads must follow the naming convention:
+```
+{sample_id}_R1.fastq.gz
+{sample_id}_R2.fastq.gz
+```
+All reads should be in the directory that you pass as `--indir`.
+
+---
+
 ## Usage
 ```bash
 nextflow run your-org/pipeline-name \
@@ -41,7 +53,7 @@ nextflow run your-org/pipeline-name \
 
 | Parameter | Description |
 |-----------|-------------|
-| `--input` | Path to samplesheet (CSV) |
+| `--indir` | Path to FASTQ files |
 | `--outdir` | Output directory |
 
 ### Optional arguments
@@ -51,13 +63,3 @@ nextflow run your-org/pipeline-name \
 | `--genome` | `GRCh38` | Reference genome |
 | `--max_cpus` | `16` | Max CPUs per process |
 | `--max_memory` | `128.GB` | Max memory per process |
-
-### Profiles
-
-| Profile | Description |
-|---------|-------------|
-| `docker` | Run with Docker |
-| `singularity` | Run with Singularity |
-| `conda` | Run with Conda |
-| `test` | Run with test data |
-```
