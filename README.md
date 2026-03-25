@@ -32,14 +32,15 @@ cd trap-seq
 
 ## Input
 
-Reads should follow one of two naming conventions:
-If lanes are already merged:
+Reads should follow one of two naming conventions.
+
+Convention 1: If lanes are already merged:
 ```
 {sample_id}_R1.fastq.gz
 {sample_id}_R2.fastq.gz
 ```
 
-If lanes need to be merged:
+Convention 2: If lanes need to be merged:
 ```
 {sample_id}_L1_R1.fastq.gz
 {sample_id}_L2_R1.fastq.gz
