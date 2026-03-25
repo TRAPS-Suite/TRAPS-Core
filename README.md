@@ -43,7 +43,7 @@ All reads should be in the directory that you pass as `--indir`.
 
 ## Usage
 ```bash
-nextflow run your-org/pipeline-name \
+nextflow run main.nf \
   --input samplesheet.csv \
   --outdir results \
   -profile docker
