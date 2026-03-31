@@ -68,6 +68,7 @@ nextflow run main.nf \
 |-----------|-------------|
 | `--indir` | Path to FASTQ files |
 | `--outdir` | Output directory |
+| `--refs` | Either a list of paths, or a path to your `refs.csv` reference input file (see formatting below)|
 
 ### Optional arguments
 
@@ -75,3 +76,18 @@ nextflow run main.nf \
 |-----------|---------|-------------|
 | `--min_depth` | `5` | Minimum depth for a position to not be masked |
 | `--merge_lanes` | false | Merge lanes before proceeding with the pipeline |
+
+### Reference Input File Formatting
+
+In this case, the program receieves one reference, with a premade index. In reports, the reference will be referred to as "Zika Virus".
+
+```csv
+ref_path,ref_name,index_prefix
+/my_folder/references/zikv.fa,Zika Virus,/my_folder/references/zikv
+```
+In this case, there is no premade index available, so the program will automatically create one.
+
+```csv
+ref_path,ref_name,index_prefix
+/my_folder/references/wnv.fa,West Nile Virus,none
+```
