@@ -73,3 +73,7 @@ nextflow run main.nf \
 |-----------|---------|-------------|
 | `--min_depth` | `5` | Minimum depth for a position to not be masked |
 | `--merge_lanes` | false | Merge lanes before proceeding with the pipeline |
+
+## Output
+### Coverage Maps
+TRAP-Seq outputs one coverage map for every combination of the references and samples.
