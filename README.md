@@ -1,4 +1,4 @@
-<img width="100%" alt="logoText" src="https://github.com/user-attachments/assets/a2aed66c-0d11-48c6-9b2e-9e8ecbdd381d" />
+<img width="100%" alt="logoText(1)" src="https://github.com/user-attachments/assets/a407ae11-2800-401d-b455-e53ee913d889" />
 # TRAP-Seq
 **T**argeted **R**etrieval of **A**rthropod-borne **P**athogen **Seq**uences
 
