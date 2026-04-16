@@ -1,7 +1,4 @@
 <img width="100%" alt="logoText(1)" src="https://github.com/user-attachments/assets/a407ae11-2800-401d-b455-e53ee913d889" />
-# TRAP-Seq
-**T**argeted **R**etrieval of **A**rthropod-borne **P**athogen **Seq**uences
-
 A Nextflow pipeline for processing hybrid capture sequencing data to align and analyze pathogen sequences
 
 ---
