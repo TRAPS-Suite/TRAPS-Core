@@ -1,5 +1,13 @@
 <img width="100%" alt="logoText(1)" src="https://github.com/user-attachments/assets/a407ae11-2800-401d-b455-e53ee913d889" />
-A Nextflow pipeline for processing hybrid capture sequencing data to align and analyze pathogen sequences
+![Version](https://img.shields.io/badge/version-4.5.0-blue)
+
+Targeted Retreival of Arthropod Borne Pathogen Sequences
+
+## Highlights
+- Customizable
+- Returns consensus sequence
+- Organized and easy to read visual reports
+- CSV reports
 
 ---
 
