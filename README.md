@@ -1,4 +1,4 @@
-<img width="100%" alt="logoText(1)" src="https://github.com/user-attachments/assets/a407ae11-2800-401d-b455-e53ee913d889" />
+# trapSeq
 ![Version](https://img.shields.io/badge/version-4.5.0-blue)
 
 Targeted Retreival of Arthropod Borne Pathogen Sequences
