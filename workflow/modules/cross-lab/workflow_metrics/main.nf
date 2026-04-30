@@ -2,7 +2,7 @@ process WORKFLOW_METRICS {
     debug true
     tag "$sample_id"
     container "$projectDir/containers/samtools.sif"
-    publishDir "${params.outdir ?: 'results'}/workflow_metrics", mode: 'copy'
+    publishDir "${params.outdir}/workflow_metrics", mode: 'copy'
 
     input:
     tuple val(sample_id), path(input_file), val(stage)

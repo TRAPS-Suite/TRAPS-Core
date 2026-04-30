@@ -1,7 +1,7 @@
 process CONFIDENCE_DECISION {
     tag "$sample_id"
     container "$projectDir/containers/samtools.sif"
-    publishDir "${params.outdir ?: 'results'}/confidence_decision", mode: 'copy'
+    publishDir "${params.outdir}/confidence_decision", mode: 'copy'
 
     input:
     tuple val(sample_id), path(in_bam)

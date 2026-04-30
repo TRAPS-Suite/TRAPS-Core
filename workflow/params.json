@@ -1,0 +1,10 @@
+{
+    "input_dir": "/work/hsommer/indir",
+    "output_dir": "/work/hsommer/output",
+    "refs": "refs.csv",
+    "min_depth": 5,
+    "single_end": true,
+    "pathogen_type": "viral",
+    "container_dir": "$WORK/trapseq/containers",
+    "report_format": "pdf"
+}

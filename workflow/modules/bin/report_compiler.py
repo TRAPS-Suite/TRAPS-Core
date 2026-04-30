@@ -1,60 +1,67 @@
 import pandas as pd
 import os
 import sys
-import pysam
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
+import pysam
+import csv
 
-#script_dir = os.path.dirname(os.path.abspath(__file__))
-#prefix = "../../results/workflow_metrics/"
-#file_path_tr = prefix+"HC6A_trimmed_reads.tsv"
-#file_path_rr = prefix+"HC6A_raw_reads.tsv"
-#file_path_rm = prefix+"HC6A_reference_metrics.tsv"
+outdir = sys.argv[1]
 
-#file_path1_tr = os.path.join(script_dir, file_path_tr)
-#file_path1_rr = os.path.join(script_dir, file_path_rr)
-#file_path1_dr = os.path.join(script_dir, file_path_dr)
-#file_path1_rm = os.path.join(script_dir, file_path_rm)
+if(outdir[-1] == "/"):
+    outdir = outdir[0:-1] + "/workflow_metrics"
+else:
+    outdir = outdir + "/workflow_metrics"
 
-file_path1_rr = sys.argv[1]
-file_path1_tr = sys.argv[2]
-file_path1_rm = sys.argv[3]
-sample_id_in = sys.argv[4]
+#print(outdir)
 
+raw_metrics_files = os.listdir(outdir + "/raw_metrics")
+trimmed_metrics_files = os.listdir(outdir + "/trimmed_metrics")
+aligned_metrics_files = os.listdir(outdir + "/aligned_metrics")
+deduped_metrics_files = os.listdir(outdir + "/deduped_metrics")
 
-
-#### Compiling CSV report
-custom_header = ["sample", "trimmed_reads"]
-trimmed_reads = pd.read_csv(file_path1_tr, header=None, names=custom_header, sep='\t')
-sample = trimmed_reads.iat[0,0]
-custom_header = ["sample", "raw_reads"]
-raw_reads = pd.read_csv(file_path1_rr, header=None, names=custom_header, sep='\t')
-custom_header = ["reference", "mapped_reads", "cov_bases", "coverage_percent", "mean_depth"]
-reference_metrics = pd.read_csv(file_path1_rm, header=None, names=custom_header, sep='\t')
-
-raw_reads_num = raw_reads.iat[0, 1]
-trimmed_reads_num = trimmed_reads.iat[0,1]
-references_num = len(raw_reads) + 1
-report_part = pd.DataFrame(columns=['sample', 'reads_raw', 'reads_trimmed', "reads_mapped", "coverage", "mean_depth", "reference"])
-
-
-print(reference_metrics.iat[0, 2])
-
-for i in range(references_num):
-    n_sample = sample
-    n_reads_raw = raw_reads_num
-    n_reads_trimmed = trimmed_reads_num
-    n_reads_mapped = reference_metrics.iat[i, 1]
-    n_coverage = reference_metrics.iat[i, 2]
-    n_mean_depth = reference_metrics.iat[i, 3]
-    n_reference = reference_metrics.iat[i,0]
-    new_row = [n_sample, n_reads_raw, n_reads_trimmed, n_reads_mapped, n_coverage, n_mean_depth, n_reference]
-    report_part.loc[len(report_part)] = new_row
-
-print(report_part.head())
-report_part.to_csv(sample_id_in + '_report_part.csv', index=False)
+samples = []
+raw_reads = []
+reads_after_trimming = []
+aligned_reads = []
+reads_after_deduping = []
+percent_genome_covered = []
+mean_genomic_depth = []
+mean_callable_depth = []
+references = []
 
 
 
 
+ref_num = 0
+
+
+with open(outdir+f'/aligned_metrics/{aligned_metrics_files[0]}', 'r', newline='', encoding='utf-8') as tsvfile:
+        reader = csv.reader(tsvfile, delimiter='\t')
+        for row in reader:
+            ref_num += 1
+print(ref_num)
+
+for mfile in raw_metrics_files:
+    split_file_name = mfile.split("_raw")
+    #print(split_file_name[0])
+    for i in range(ref_num):
+        samples.append(split_file_name[0])
+
+for sample in samples:
+    references = 0
+    with open(outdir+f'/raw_metrics/{sample}_raw_reads.tsv', 'r', newline='', encoding='utf-8') as tsvfile:
+        reader = csv.reader(tsvfile, delimiter='\t')
+        for row in reader:
+            #print(row[1])
+            raw_reads.append(row[1])
+    with open(outdir+f'/aligned_metrics/{sample}_aligned_metrics.tsv', 'r', newline='', encoding='utf-8') as tsvfile:
+        # Specify the delimiter as a tab
+        reader = csv.reader(tsvfile, delimiter='\t')
+
+        # Iterate over each row
+        for row in reader:
+            references += 1
+            #print(row)
+    print(samples)
+    print(raw_reads)

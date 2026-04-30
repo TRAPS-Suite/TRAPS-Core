@@ -1,6 +1,7 @@
 process REPORT_COMPILATION {
     tag "$sample_id"
-    publishDir "${params.outdir ?: 'results'}/report", mode: 'copy'
+    cpus 4
+    publishDir "${params.outdir}/report", mode: 'copy'
 
     input:
     tuple val(sample_id), path(raw), path(trimmed), path(wf_metrics), path(marked_dup), path(marked_dup_index)
@@ -10,6 +11,8 @@ process REPORT_COMPILATION {
 
     script:
     """
+    export MPLCONFIGDIR=/scratch/hsommer/matplotlib
+    mkdir -p \$MPLCONFIGDIR
     python3 ${workflow.projectDir}/modules/bin/report_compiler.py ${raw} ${trimmed} ${wf_metrics} ${sample_id}
     python3 ${workflow.projectDir}/modules/bin/coverage_gen.py ${marked_dup} ${marked_dup_index}
     """

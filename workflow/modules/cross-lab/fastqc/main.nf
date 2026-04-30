@@ -1,7 +1,7 @@
 process FASTQC {
     tag "$sample_id"
     container "$projectDir/containers/fastqc.sif"
-    publishDir "${params.outdir ?: 'results'}/fastqc", mode: 'copy'
+    publishDir "${params.outdir}/fastqc", mode: 'copy'
 
     input:
     tuple val(sample_id), path(reads)

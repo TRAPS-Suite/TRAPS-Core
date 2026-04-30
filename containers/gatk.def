@@ -1,0 +1,143 @@
+# ===================================
+# GATK Apptainer Build Script
+# Author: Henry Sommer | Cross Lab
+# Institution: UNMC
+# Created: 2026/03/18
+# ===================================
+Bootstrap: docker
+From: ubuntu:22.04
+
+%help
+    This container provides GATK (Genome Analysis Toolkit) for variant calling.
+    
+    Included:
+    - GATK 4.5.0.0
+    - SAMtools 1.19 (for BAM processing and indexing)
+    - BCFtools 1.19 (for VCF processing)
+    - HTSlib 1.19 (tabix, bgzip)
+    - Picard (bundled with GATK)
+    - Java 17 Runtime
+    
+    Basic usage:
+        apptainer exec gatk.sif gatk --list
+        apptainer exec gatk.sif gatk HaplotypeCaller --help
+        apptainer exec gatk.sif samtools --help
+        apptainer exec gatk.sif bcftools --help
+    
+    Prepare reference files:
+        apptainer exec gatk.sif samtools faidx reference.fasta
+        apptainer exec gatk.sif gatk CreateSequenceDictionary -R reference.fasta
+    
+    Example variant calling:
+        apptainer exec gatk.sif gatk HaplotypeCaller \
+            -R reference.fasta \
+            -I sample.bam \
+            -O variants.vcf.gz
+
+%environment
+    export PATH=/opt/gatk:/usr/local/bin:$PATH
+    export GATK_LOCAL_JAR=/opt/gatk/gatk-package-4.5.0.0-local.jar
+    export LC_ALL=C
+
+%post
+    # Set noninteractive to avoid prompts
+    export DEBIAN_FRONTEND=noninteractive
+    export DEBCONF_NONINTERACTIVE_SEEN=true
+    
+    # Update package list
+    apt-get update
+    
+    # Install minimal dependencies
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        wget \
+        unzip \
+        bzip2 \
+        openjdk-17-jre-headless \
+        python3 \
+        build-essential \
+        zlib1g-dev \
+        libbz2-dev \
+        liblzma-dev \
+        libcurl4-openssl-dev \
+        libssl-dev \
+        libncurses5-dev \
+        autoconf \
+        pkg-config \
+        bedtools
+
+    # Clean apt cache
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
+    # Create installation directory
+    mkdir -p /opt/gatk
+
+    # Install GATK 4.5.0.0
+    cd /opt/gatk
+    wget -q https://github.com/broadinstitute/gatk/releases/download/4.5.0.0/gatk-4.5.0.0.zip
+    unzip -q gatk-4.5.0.0.zip
+    mv gatk-4.5.0.0/* .
+    rm -rf gatk-4.5.0.0.zip gatk-4.5.0.0
+    chmod +x gatk
+    ln -s /opt/gatk/gatk /usr/local/bin/gatk
+
+    # Install SAMtools 1.19
+    cd /tmp
+    wget -q https://github.com/samtools/samtools/releases/download/1.19/samtools-1.19.tar.bz2
+    tar -xjf samtools-1.19.tar.bz2
+    cd samtools-1.19
+    ./configure --prefix=/usr/local
+    make -j$(nproc)
+    make install
+    cd /tmp && rm -rf samtools-1.19*
+
+    # Install BCFtools 1.19
+    cd /tmp
+    wget -q https://github.com/samtools/bcftools/releases/download/1.19/bcftools-1.19.tar.bz2
+    tar -xjf bcftools-1.19.tar.bz2
+    cd bcftools-1.19
+    ./configure --prefix=/usr/local
+    make -j$(nproc)
+    make install
+    cd /tmp && rm -rf bcftools-1.19*
+
+    # Install HTSlib (for tabix, bgzip)
+    cd /tmp
+    wget -q https://github.com/samtools/htslib/releases/download/1.19/htslib-1.19.tar.bz2
+    tar -xjf htslib-1.19.tar.bz2
+    cd htslib-1.19
+    ./configure --prefix=/usr/local
+    make -j$(nproc)
+    make install
+    cd /tmp && rm -rf htslib-1.19*
+    ln -s /usr/bin/python3 /usr/bin/python
+    # Clean up
+    # rm -rf /tmp/*
+
+%runscript
+    exec gatk "$@"
+
+%test
+    # Test GATK installation
+    echo "Testing GATK..."
+    gatk --version
+    
+    # Test SAMtools
+    echo "Testing SAMtools..."
+    samtools --version
+    
+    # Test BCFtools
+    echo "Testing BCFtools..."
+    bcftools --version
+    
+    # Test HTSlib tools
+    echo "Testing HTSlib tools..."
+    tabix --version
+    bgzip --version
+    
+    echo ""
+    echo "==================================="
+    echo "All tools installed successfully!"
+    echo "==================================="
+

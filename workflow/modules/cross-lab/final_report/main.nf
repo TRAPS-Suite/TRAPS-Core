@@ -1,5 +1,6 @@
     process FINAL_REPORT {
 
+    publishDir "${params.outdir}/report", mode: 'copy'
 
     input:
     path report_list

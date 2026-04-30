@@ -121,7 +121,7 @@ with PdfPages(output_pdf) as pdf:
 
             ax.set_title(title, loc="left")
 
-            ax.set_ylabel("Coverage")
+            ax.set_ylabel("Depth")
 
             ax.margins(x=0)
 

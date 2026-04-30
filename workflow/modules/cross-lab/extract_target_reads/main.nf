@@ -1,7 +1,7 @@
 process EXTRACT_TARGET_READS {
     tag "$sample_id"
     container "$projectDir/containers/samtools.sif"
-    publishDir "${params.outdir ?: 'results'}/extract_viral_reads", mode: 'copy'
+    publishDir "${params.outdir}/extract_viral_reads", mode: 'copy'
 
     input:
     tuple val(sample_id), path(bam_file)
