@@ -1,0 +1,36 @@
+# ===================================
+# BWA-MEM2 Apptainer Build Script
+# Author: Henry Sommer | Cross Lab
+# Institution: UNMC
+# Created: 2026/02/19
+# ===================================
+
+Bootstrap: docker
+From: ubuntu:22.04
+
+%post
+    apt-get -y update
+    apt-get -y install wget bzip2 tar
+    cd /opt
+    wget https://github.com/bwa-mem2/bwa-mem2/releases/download/v2.3/bwa-mem2-2.3_x64-linux.tar.bz2
+    tar -xjf bwa-mem2-2.3_x64-linux.tar.bz2
+    ln -s /opt/bwa-mem2-2.3_x64-linux/bwa-mem2 /usr/local/bin/bwa-mem2
+    ln -s /opt/bwa-mem2-2.3_x64-linux/bwa-mem2.avx /usr/local/bin/bwa-mem2.avx
+    ln -s /opt/bwa-mem2-2.3_x64-linux/bwa-mem2.avx2 /usr/local/bin/bwa-mem2.avx2
+    ln -s /opt/bwa-mem2-2.3_x64-linux/bwa-mem2.avx512bw /usr/local/bin/bwa-mem2.avx512bw
+    ln -s /opt/bwa-mem2-2.3_x64-linux/bwa-mem2.sse41 /usr/local/bin/bwa-mem2.sse41
+    ln -s /opt/bwa-mem2-2.3_x64-linux/bwa-mem2.sse42 /usr/local/bin/bwa-mem2.sse42
+
+    apt-get -y install wget build-essential bzip2 tar zlib1g-dev libbz2-dev liblzma-dev libcurl4-gnutls-dev libncurses-dev libdeflate-dev
+    cd /opt
+    wget https://github.com/samtools/samtools/releases/download/1.23/samtools-1.23.tar.bz2
+    tar -xjf samtools-1.23.tar.bz2
+    cd samtools-1.23
+    ./configure --without-curses
+    make
+    make install
+
+
+
+%environment
+    export PATH="/usr/local/bin:$PATH"

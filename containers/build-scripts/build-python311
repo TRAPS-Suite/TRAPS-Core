@@ -1,0 +1,8 @@
+# Build Python 3.11 Container
+#!/bin/bash
+set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEF_FILE="${SCRIPT_DIR}/../python311.def"
+SIF_FILE="${SCRIPT_DIR}/../python311.sif"
+
+apptainer build $SIF_FILE $DEF_FILE 

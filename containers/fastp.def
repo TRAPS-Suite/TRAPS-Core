@@ -1,0 +1,22 @@
+# ===================================
+# fastp Apptainer Build Script
+# Author: Henry Sommer | Cross Lab
+# Institution: UNMC
+# Created: 2026/02/19
+# ===================================
+
+Bootstrap: docker
+From: ubuntu:22.04
+
+%post
+    apt-get -y update
+    apt-get -y install wget
+    cd /opt
+    wget http://opengene.org/fastp/fastp.0.23.4
+    mv fastp.0.23.4 fastp
+    chmod a+x ./fastp
+    ln -s /opt/fastp /usr/local/bin/fastp
+
+
+%environment
+    export PATH="/usr/local/bin:$PATH"

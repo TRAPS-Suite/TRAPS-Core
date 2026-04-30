@@ -1,0 +1,68 @@
+# ===================================
+# FASTQC Apptainer Build Script
+# Author: Henry Sommer | Cross Lab
+# Institution: UNMC
+# Created: 2025/11/08
+# ===================================
+
+Bootstrap: docker
+From: ubuntu:22.04
+
+%post
+        ######################################
+        ### Install build / display tools ####
+        ######################################
+        # Get update, and install necessary tools
+	apt-get update -y
+	apt-get install -y --no-install-recommends \
+    		wget \
+    		build-essential \
+    		zlib1g-dev \
+   		libisal-dev \
+    		libdeflate-dev \
+    		default-jre \
+		perl \
+		unzip \
+    		&& apt-get clean \
+    		&& rm -rf /var/lib/apt/lists/*
+
+        #########################
+        ### Installing FASTQC ###
+        #########################
+        cd /tmp
+        wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.7.zip -O fastqc.zip
+        unzip -o fastqc.zip -d fastqc_dir
+
+        # Move FastQC to a permanent location inside the container
+        mkdir -p /usr/local/fastqc
+        cp -r fastqc_dir/FastQC/* /usr/local/fastqc/
+
+        # Make the binary executable
+        chmod +x /usr/local/fastqc/fastqc
+
+        # Add a symlink to /usr/local/bin so it's on PATH
+        cp /usr/local/fastqc/fastqc /usr/local/bin/fastqc
+
+        ###################
+        ### Cleaning Up ###
+        ###################
+        # Safe to remove temporary files now
+        cd /
+        rm -rf /tmp/fastqc_dir /tmp/fastqc.zip
+
+
+
+%environment
+        export LC_ALL=C
+        export PATH=/usr/games:$PATH
+
+%runscript
+    center_text() {
+        text="$1"
+        columns=$(tput cols)
+        padding=$(( (columns - ${#text}) / 2 ))
+        printf "%*s\\n" "$((padding + ${#text}))" "$text"
+    }
+    center_text "Vector"
+    center_text "v0.2.0-alpha"
+    center_text "----------------------------------"

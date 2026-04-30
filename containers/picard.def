@@ -1,0 +1,43 @@
+# ===================================
+# Picard Apptainer Build Script
+# Author: Henry Sommer | Cross Lab
+# Institution: UNMC
+# Created: 2026/01/26
+# ===================================
+
+Bootstrap: docker
+From: ubuntu:22.04
+
+%post
+        ######################################
+        ### Install build / display tools ####
+        ######################################
+        # Get update, and install necessary tools
+	    apt-get update -y
+	    apt-get install -y --no-install-recommends \
+        wget \
+        openjdk-17-jre-headless \
+		perl \
+		unzip \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
+
+        #########################
+        ### Installing Picard ###
+        #########################
+
+        mkdir -p /opt/picard
+        wget -O /opt/picard/picard.jar https://github.com/broadinstitute/picard/releases/download/3.4.0/picard.jar
+        export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+        # Create wrapper script
+        echo '#!/bin/bash' > /usr/local/bin/picard
+        echo 'java -Xms2g -Xmx14g -jar /opt/picard/picard.jar "$@"' >> /usr/local/bin/picard
+        chmod +x /usr/local/bin/picard
+
+
+
+
+%environment
+    export PATH=/opt/picard:$PATH
+    export PICARD_JAR=/opt/picard/picard.jar

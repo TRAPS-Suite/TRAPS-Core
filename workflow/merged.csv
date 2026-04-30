@@ -1,0 +1,9 @@
+sample,reads_raw,reads_trimmed,reads_mapped,coverage,mean_depth,reference
+HCPOS_1,8521027,8520203,839577,100,4175.46,NC_009942.1
+HCPOS_1,8521027,8520203,0,0,0.0,NC_012532.1
+sample,reads_raw,reads_trimmed,reads_mapped,coverage,mean_depth,reference
+HCPOS_3,9737525,9736476,890579,99.9909,4510.06,NC_009942.1
+HCPOS_3,9737525,9736476,2,0.176024,0.00352047,NC_012532.1
+sample,reads_raw,reads_trimmed,reads_mapped,coverage,mean_depth,reference
+HC6A,71717.0,65929.0,3997.0,99.0661,26.4893,NC_009942.1
+HC6A,71717.0,65929.0,0.0,0.0,0.0,NC_012532.1
