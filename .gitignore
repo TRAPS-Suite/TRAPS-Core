@@ -1,0 +1,53 @@
+# Nextflow execution artifacts
+.nextflow/
+.nextflow.log*
+work/
+
+# Reports and logs (if you don't want them in version control)
+report.html
+timeline.html
+trace.txt
+dag.pdf
+dag.dot
+dag.png
+
+
+# Raw and Processed Data
+data/
+results/
+raw_data/
+output/
+
+# Common High-Throughput Sequencing Formats
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.sam
+*.cram
+*.vcf
+*.vcf.gz
+*.bcf
+
+# Large Reference Files and Indices
+*.fasta
+*.fa
+*.fna
+*.dict
+*.fai
+*.gtf
+*.gff
+*.gff3
+
+# Tool-specific indices (e.g., Bowtie2, STAR, BWA)
+*.bt2
+*.bt2l
+*SA
+*SAindex
+*Genome
+
+indexes/
+*.sif
+
+*.def
