@@ -1,7 +1,13 @@
-# TRAP-Seq
-**T**argeted **R**etrieval of **A**rthropod-borne **P**athogen **Seq**uences
+# trapSeq
+![Version](https://img.shields.io/badge/version-4.5.0-blue)
 
-A Nextflow pipeline for processing hybrid capture sequencing data to align and analyze pathogen sequences
+Targeted Retreival of Arthropod Borne Pathogen Sequences
+
+## Highlights
+- Customizable
+- Returns consensus sequence
+- Organized and easy to read visual reports
+- CSV reports
 
 ---
 
@@ -17,7 +23,7 @@ A Nextflow pipeline for processing hybrid capture sequencing data to align and a
 
 ## Requirements
 - [Nextflow](https://www.nextflow.io/) `>=23.04`
-- [Docker](https://www.docker.com/) / [Singularity](https://sylabs.io/) / [Conda](https://conda.io/)
+- [Apptainer](https://apptainer.org/) `Formerly Singularity`
 
 ---
 
