@@ -19,3 +19,8 @@ You can configure TRAPS through a [configuration file](config.md) passed in the 
 | `--outdir` | Output Directory | Output | path |
 | `--singleend` | Single End | Are reads single end? | bool |
 | `--refs` | Reference File | Which references to run against | path |
+
+### Running
+Run TRAPS with `nextflow run main.nf` within the workflow directory.
+> [!IMPORTANT]
+> If your `--outdir` flag points to a directory that already contains a TRAPS run, the program will **not** store the run there. Instead, it will save it in a directory in the same directory as the target.
