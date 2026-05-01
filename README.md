@@ -13,11 +13,17 @@ TRAPS is a scalable, highly customizable, and user friendly Nextflow pipeline fo
 - **Scalable** Input as many samples and references as needed
 - **Sensitive** TRAPS analyzes every sample for every reference, ensuring that both infections and coinfections are detected
 - **Reports** An interactive web app enables graphical analysis of the data collected
+- **Run Management** Runs are saved in a custom system using the `.tar` format
 
-
-
-## Quick Start
 ## Usage
+### Quick Start
+Requirements:
+- Apptainer
+- Nextflow
+
+```bash
+git clone traps
+```
 ### Configuration
 You can configure TRAPS through a [configuration file](config.md) passed in the CLI, or with [flags](config.md) passed in the CLI. For reproducibility, it is recommended to create a configuration file for highly customized settings. Basic parameters are shown below.
 
@@ -34,6 +40,7 @@ You can configure TRAPS through a [configuration file](config.md) passed in the 
 ### Running
 Run TRAPS with `nextflow run main.nf` within the workflow directory.
 > [!IMPORTANT]
-> If your `--outdir` flag points to a directory that already contains a TRAPS run, the program will **not** store the run there. Instead, it will save it in a directory in the same directory as the target.
+> If your `--outdir` flag points to a directory, and your `--runname` flag is identical to a run within this directory, TRAPS will not run. Change your `--runname`
 
-
+### Storage
+TRAPS is stored in single archives with the `.traps` extension.
