@@ -13,7 +13,9 @@ You can configure TRAPS through a [configuration file](config.md) passed in the 
 > [!IMPORTANT]
 > Any parameter passed in the CLI will take priority over a configuration file.
 
-| Flag | Name | Explanation |
-| -------- | -------- | -------|
-| `--indir` | Input Directory | Reads to run |
-| `--outdir` | Output Directory | Output |
+| Flag | Name | Explanation | Type |
+| -------- | -------- | -------| -------|
+| `--indir` | Input Directory | Reads to run | path |
+| `--outdir` | Output Directory | Output | path |
+| `--singleend` | Single End | Are reads single end? | bool |
+| `--refs` | Reference File | Which references to run against | path |
