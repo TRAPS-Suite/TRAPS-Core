@@ -65,6 +65,7 @@ TRAPS is stored in single archives with the `.traps` extension.
 
 ## Formatting
 ### FASTQ Filenames
+The `fastq` read files you want to run in the pipeline should follow this syntax:
 ### References
 The references file should be in `CSV`, `TSV`, or `JSON` format.
 `CSV` and `TSV` should follow this syntax:
