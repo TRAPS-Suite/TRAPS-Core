@@ -42,6 +42,8 @@ cd TRAPS/workflow
 Make sure your `.FASTQ` files are stored in a dedicated directory and follow the [formatting guidelines]([url](https://github.com/henry-j-sommer/TRAPS.git)).
 Make sure your [reference configuration file]([url](https://github.com/henry-j-sommer/TRAPS.git)) is created.
 
+
+
 ### Configuration
 Create your [configuration file](config.md) to edit naming format, tools used, and other parameters. 
 
@@ -62,6 +64,11 @@ Run TRAPS with `nextflow run main.nf` within the workflow directory.
 
 ### Storage
 TRAPS is stored in single archives with the `.traps` extension.
+
+## Frequently Asked Questions
+
+### Q: Why are my `sampleid` properties not what I expect?
+### A: Check your [configuration file](config.md) formatting.
 
 ## Formatting
 ### FASTQ Filenames
