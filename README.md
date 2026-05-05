@@ -43,7 +43,7 @@ Make sure your `.FASTQ` files are stored in a dedicated directory and follow the
 Make sure your [reference configuration file]([url](https://github.com/henry-j-sommer/TRAPS.git)) is created.
 
 ### Configuration
-You can configure TRAPS through a [configuration file](config.md) passed in the CLI, or with [flags](config.md) passed in the CLI. For reproducibility, it is recommended to create a configuration file for highly customized settings. Basic parameters are shown below.
+Create your [configuration file](config.md) to edit naming format, tools used, and other parameters. 
 
 > [!WARNING]
 > Any parameter passed in the CLI will take priority over a configuration file.
@@ -52,8 +52,8 @@ You can configure TRAPS through a [configuration file](config.md) passed in the 
 | -------- | -------- | -------| -------|
 | `--indir` | Input Directory | Reads to run | path |
 | `--outdir` | Output Directory | Output | path |
-| `--singleend` | Single End | Are reads single end? | bool |
 | `--refs` | Reference File | Which references to run against | path |
+| `-params-file` | Configuration File | A path pointing to your [configuration file](config.md) | path |
 
 ### Running
 Run TRAPS with `nextflow run main.nf` within the workflow directory.
