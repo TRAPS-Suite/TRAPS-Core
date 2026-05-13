@@ -2,6 +2,7 @@ println "========================================="
 println "  TRAPS  "
 println "  v4.5.0   "
 println "  Date: ${new Date()}                     "
+println "  Author: Henry Sommer                    "
 println "========================================="
 println '"To know how to wonder and question is '
 println 'the first step of the mind toward discovery."'
