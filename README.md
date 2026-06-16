@@ -1,5 +1,8 @@
 # TRAPS
 
+<img width="877" height="367" alt="traps_logo_v6" src="https://github.com/user-attachments/assets/46a2b9bd-36c5-4b85-a259-87a0b6a081d4" />
+
+
 **T**argeted **R**etrieval and **A**nalysis of **A**rthopod Borne **P**athogen **S**equences
 
 ---
