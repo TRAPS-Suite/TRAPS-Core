@@ -14,7 +14,8 @@ include {RAW_METRICS_SINGLE_STRAND}     from './modules/cross-lab/metrics/main.n
 include {RAW_METRICS_PAIRED_END}        from './modules/cross-lab/metrics/main.nf'
 include {ALIGNED_METRICS}               from './modules/cross-lab/metrics/main.nf'
 include {DEDUPED_METRICS}               from './modules/cross-lab/metrics/main.nf'
-include {FASTP}                         from './modules/cross-lab/fastp/main.nf'
+include {FASTP_PAIRED_END}                         from './modules/cross-lab/fastp/main.nf'
+include {FASTP_SINGLE_END} from './modules/cross-lab/fastp/main.nf'
 include {BWAMEM2}                       from './modules/cross-lab/bwamem2/main.nf'
 include {BWAMEM2_INDEX}                 from './modules/cross-lab/bwamem2/main.nf'
 include {DEDUPLICATE as DEDUP}          from './modules/cross-lab/deduplicate/main.nf'
@@ -39,20 +40,25 @@ include {PLOT_FULL_REFERENCE_UNIQUE}    from './modules/cross-lab/alt_cov_report
 
 workflow {
     references_input = Channel
-        .fromPath("${params.refs}")
+        .fromPath("${params.references}")
         .splitCsv(header: true, strip: true)
         .map { row ->
             def index_prefix = row.index_prefix_path ? row.index_prefix_path.trim() : "none"
             tuple(row.ref_name.trim(), file(row.ref_path.trim()), index_prefix)
         }
 
+
+    // Creating the samples input channel
     if (params.single_end) {
         samples_input = Channel
-            .fromPath("${params.indir}/*_R1_001.fastq.gz")
-            .map { fastq ->
-                def filename  = fastq.name.toString()
-                def sample_id = filename.replaceAll(/_S\d+_L\d+_R\d+_\d+\.fastq\.gz$/, '')
-                tuple(sample_id, [fastq])
+            .fromPath("${params.indir}")
+             .map { file ->
+                def parts = file.simpleName.tokenize('_')
+                def meta = [
+                    sample_id:      parts[0],
+                    read:    parts[1]
+                ]
+                tuple(sample_id, read)
             }
     } else {
         samples_input = Channel
@@ -65,6 +71,10 @@ workflow {
                 tuple(clean_id, reads)
             }
     }
+
+    samples_input.view()
+
+
    
     // Metrics
     if(params.single_end) {
@@ -73,37 +83,35 @@ workflow {
         raw_metrics = RAW_METRICS_PAIRED_END(samples_input)
     }
 
-    // Trimming
-    FASTP(samples_input, params.single_end)
+ 
+    
 
     // Prepare Reference
     PREPARE_REFERENCE(references_input)
 
-    // Branch references by whether index is pre-built or needs building
-    references_input.branch { name, path, index ->
-        specified:     index != 'none'
-        not_specified: index == 'none'
-    }.set { branched_ref_in }
 
     // Index references that don't have a pre-built index
-    BWAMEM2_INDEX(branched_ref_in.not_specified)
+    index = BWAMEM2_INDEX(references_input)
 
-    // Combine pre-built and newly-built indexes
-    references_prepared = branched_ref_in.specified
-        .mix(INDEX.out.index_bundle)
 
     // Join with .fai and .dict from PREPARE_REFERENCE
-    references_full = references_prepared
+    references_full = index
         .join(PREPARE_REFERENCE.out.bundle)
 
-    // ── Per sample × reference: Align ───────────────────────────
-    sample_x_ref = FASTP.out.fastp_trimmed
-        .combine(references_full)
+   // Trimming
+    if(params.single_end) {
+        FASTP_SINGLE_END(samples_input, params.single_end)
+        sample_x_ref = FASTP_SINGLE_END.out.fastp_trimmed
+            .combine(references_full)
+    }
 
-    BWAMEM2(sample_x_ref, params.single_end)
+    if(params.alignment.tool = "bwa-mem2") {
+        BWAMEM2(sample_x_ref, params.single_end)
+        aligned = BWAMEM2.out.aligned_sorted 
+    }
 
     // ── Per SxR: Deduplicate ────────────────────────────────────
-    DEDUP(ALIGN.out.aligned_sorted)
+    DEDUP(aligned)
 
     // ── Per SxR: Variant Calling ────────────────────────────────
     HAPLOTYPE_CALLER(DEDUP.out.marked_bam)
