@@ -38,20 +38,12 @@ sample_names = [item.replace(".trimmed.fastq.gz","") for item in fastp_files]
 
 
     
-columns = ["sample", "reference", "raw_reads", "mapped_reads", "unmapped_reads", "duplicate_reads"]
+columns = ["sample", "reference", "mapped_reads", "unmapped_reads", "duplicate_reads"]
 # Create the DataFrame
 df = pd.DataFrame(columns=columns)
 
 for sample in sample_names:
     print(sample)
-    trimmed = glob.glob(fastp_dir + f"/{sample}.trimmed.fastq.gz")
-    open_func = gzip.open
-    
-    with open_func(trimmed[0], 'rt') as f:
-        line_count = sum(1 for line in f)
-        
-    raw_reads = (line_count // 4)
-    print(f"Raw reads: {raw_reads}")
     for ref in references:
         print(ref)
         aligned_file = glob.glob(dedup_dir + f"/{sample}_{ref}.sorted.marked.bam")
@@ -63,9 +55,9 @@ for sample in sample_names:
             # FLAG 0x4 (decimal 4) indicates the read is unmapped
             if read.is_unmapped:
                 unmapped += 1
-            if read.is_duplicate:
+            elif read.is_duplicate:
                 duplicate += 1
-            if not read.is_unmapped:
+            elif not read.is_unmapped:
                 mapped +=1
         
 
@@ -74,7 +66,7 @@ for sample in sample_names:
         bam_file.close()
         print(f"Mapped: {mapped}")
         print(f"Duplicates: {duplicate}")
-        df.loc[len(df)] = [sample, ref, raw_reads, mapped, unmapped, duplicate]
+        df.loc[len(df)] = [sample, ref, mapped, unmapped, duplicate]
 
 # 1. Define your file path
 filepath = Path(f"{output_dir}/metrics/metrics_table.csv")
