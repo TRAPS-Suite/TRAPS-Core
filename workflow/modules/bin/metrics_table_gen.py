@@ -7,16 +7,20 @@ import gzip
 import pysam
 import pandas as pd
 import csv
+import glob
+from Bio.SeqUtils import gc_fraction
 # Example: python script.py /my/folder
-search_dir = sys.argv[1] if len(sys.argv) > 1 else "."
-reports_dir = sys.argv[2] if len(sys.argv) > 2 else "."
-pattern = os.path.join(search_dir, "*20x_cov_deduped.txt") 
 
-output_dir = "/work/crosslab/hsommer/run4"
-fastp_dir = Path(output_dir + "/fastp")
-bm_dir = Path(output_dir + "/bwamem2")
+# Directories
+output_dir = sys.argv[1] if len(sys.argv) > 1 else "."
+refs_dir = sys.argv[2] if len(sys.argv) > 2 else "."
+fastp_dir = output_dir + "/fastp"
+bm_dir = output_dir + "/bwamem2"
+dedup_dir = output_dir + "/markduplicates"
 
-with open('/work/crosslab/hsommer.csv', mode='r', newline='', encoding='utf-8') as f:
+# Arrays, lists, dataframes, etc
+
+with open(refs_dir, mode='r', newline='', encoding='utf-8') as f:
     reader = csv.reader(f)
     
     # Optional: Skip the header row if your CSV has one
@@ -25,61 +29,60 @@ with open('/work/crosslab/hsommer.csv', mode='r', newline='', encoding='utf-8') 
     # Extract the first column (index 0) from each row
     first_column = [row[0] for row in reader]
 
+references = [item.replace(" ","_").lower() for item in first_column]
+
+fastp_files = glob.glob(fastp_dir + "/*.trimmed.fastq.gz")
+
+fastp_files = [item.split('/')[-1] for item in fastp_files]
+sample_names = [item.replace(".trimmed.fastq.gz","") for item in fastp_files]
 
 
-fastpfiles = [str(file) for file in fastp_dir.glob("*.fastq.gz") if file.is_file() and not file.name.endswith("trimmed.fastq.gz")]
-print(fastpfiles)
-
-sample_names = []
-for file in fastpfiles:
-    filesplit = file.split("_S")
-    filesplit = filesplit[0].split("/")
-    sample_name = filesplit[len(filesplit)-1]
-    sample_names.append(sample_name)
-
-bm2files = [str(file) for file in bm_dir.glob("*.bam") if file.is_file()]
-
-columns = ["sample", "reference", "fastq_reads", "mapped_reads", "unmapped_reads"]
+    
+columns = ["sample", "reference", "raw_reads", "mapped_reads", "unmapped_reads", "duplicate_reads"]
 # Create the DataFrame
 df = pd.DataFrame(columns=columns)
-print(df)
 
-
-def count_fastq_reads(filename):
-    # Open the gzipped file in text mode ('rt')
-    with gzip.open(filename, 'rt') as f:
-        # Loop through lines using a generator expression to minimize overhead
+for sample in sample_names:
+    print(sample)
+    trimmed = glob.glob(fastp_dir + f"/{sample}.trimmed.fastq.gz")
+    open_func = gzip.open
+    
+    with open_func(trimmed[0], 'rt') as f:
         line_count = sum(1 for line in f)
-    
-    # Each FASTQ read is exactly 4 lines
-    return line_count // 4
-
-
-def count_aligned_reads(bam_path):
-    reads = 0
-    # Open the BAM file
-    with pysam.AlignmentFile(bam_path, "rb") as bam_file:
-        # Iterate over all reads in the file
-        for read in bam_file.fetch():
-            # Filter for mapped reads
+        
+    raw_reads = (line_count // 4)
+    print(f"Raw reads: {raw_reads}")
+    for ref in references:
+        print(ref)
+        aligned_file = glob.glob(dedup_dir + f"/{sample}_{ref}.sorted.marked.bam")
+        mapped = 0
+        unmapped = 0
+        duplicate = 0
+        bam_file = pysam.AlignmentFile(aligned_file[0], "rb")
+        for read in bam_file.fetch(until_eof=True):
+            # FLAG 0x4 (decimal 4) indicates the read is unmapped
+            if read.is_unmapped:
+                unmapped += 1
+            if read.is_duplicate:
+                duplicate += 1
             if not read.is_unmapped:
-                # Example: Print the read name and its mapped sequence
-                reads += 1
-    
-    return(reads)
+                mapped +=1
+        
 
+        
+        # Close the files
+        bam_file.close()
+        print(f"Mapped: {mapped}")
+        print(f"Duplicates: {duplicate}")
+        df.loc[len(df)] = [sample, ref, raw_reads, mapped, unmapped, duplicate]
 
-for file in fastpfiles:
-    print("fastq reads: " + str(count_fastq_reads(file)))
+# 1. Define your file path
+filepath = Path(f"{output_dir}/metrics/metrics_table.csv")
 
-   
+# 2. Create parent directories if they do not exist
+filepath.parent.mkdir(parents=True, exist_ok=True)
 
-for file in bm2files:
-    for name in sample_names:
-        for refname in ref_names:
-            if(name+"-" or name+"_" in bam_path):
-                print("Sample: " + name)
-    print("mapped reads: " + str(count_aligned_reads(file)))
+# 3. Save the DataFrame
+df.to_csv(filepath, index=False)
 
-#read_count = count_fasta_reads(output_dir + "/bwamem2/.fasta")
-#print(f"Total reads: {read_count}")
+print(df)

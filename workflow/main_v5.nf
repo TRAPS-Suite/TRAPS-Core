@@ -34,7 +34,7 @@ workflow {
                 def reads = file2.exists() ? [file1, file2] : [file1]
                 [meta, reads]
             }
-
+    sample_input_ch.view()
     // reference input channel def
     def reference_input_ch = Channel
         .fromPath("${params.references}")

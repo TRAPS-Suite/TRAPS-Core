@@ -15,18 +15,15 @@ nextflow.enable.dsl=2
 tool_modules = "./modules/cross-lab/tools"
 metrics_modules = "./modules/cross-lab/metrics"
 
-
 include {FASTP} from "${tool_modules}/fastp/main.nf"
 include {BWAMEM2_INDEX; BWAMEM2} from "${tool_modules}/bwamem2/main.nf"
 include {DEDUPLICATE} from "${tool_modules}/deduplicate/main.nf"
- 
 include {COMPILE_METRICS_SHEET} from "${metrics_modules}/main.nf"
-
 
 workflow {
     // sample input channel def
     def sample_input_ch = Channel
-        .fromPath("${params.indir}/*_S*_L00*_R1_001.fastq.gz")
+        .fromPath("${params.indir}/*_S*_L001_R1_001.fastq.gz")
             .map { file1 ->
                 def sampleId = file1.name.replaceAll(/_S\d+_L00.*/, '')
                 def file2 = file1.parent.resolve(file1.name.replace('_R1_', '_R2_'))
@@ -57,7 +54,9 @@ workflow {
     
     DEDUPLICATE(BWAMEM2.out.aligned_sxr)
 
-    COMPILE_METRICS_SHEET() | view()
+    def deduped_channel = DEDUPLICATE.out.marked_sxr.collect()
+
+    COMPILE_METRICS_SHEET(deduped_channel) | view()
 
 
 }
