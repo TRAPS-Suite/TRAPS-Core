@@ -8,19 +8,19 @@ import pysam
 import pandas as pd
 import csv
 import glob
+from Bio.SeqUtils import gc_fraction
 # Example: python script.py /my/folder
 
 # Directories
-search_dir = sys.argv[1] if len(sys.argv) > 1 else "."
-reports_dir = sys.argv[2] if len(sys.argv) > 2 else "."
-output_dir = "/work/crosslab/hsommer/run4"
+output_dir = sys.argv[1] if len(sys.argv) > 1 else "."
+refs_dir = sys.argv[2] if len(sys.argv) > 2 else "."
 fastp_dir = output_dir + "/fastp"
 bm_dir = output_dir + "/bwamem2"
 dedup_dir = output_dir + "/markduplicates"
 
 # Arrays, lists, dataframes, etc
 
-with open('/work/crosslab/hsommer/TRAPS/workflow/two_refs.csv', mode='r', newline='', encoding='utf-8') as f:
+with open(refs_dir, mode='r', newline='', encoding='utf-8') as f:
     reader = csv.reader(f)
     
     # Optional: Skip the header row if your CSV has one
@@ -67,11 +67,22 @@ for sample in sample_names:
                 duplicate += 1
             if not read.is_unmapped:
                 mapped +=1
+        
 
+        
         # Close the files
         bam_file.close()
         print(f"Mapped: {mapped}")
         print(f"Duplicates: {duplicate}")
         df.loc[len(df)] = [sample, ref, raw_reads, mapped, unmapped, duplicate]
+
+# 1. Define your file path
+filepath = Path(f"{output_dir}/metrics/metrics_table.csv")
+
+# 2. Create parent directories if they do not exist
+filepath.parent.mkdir(parents=True, exist_ok=True)
+
+# 3. Save the DataFrame
+df.to_csv(filepath, index=False)
 
 print(df)

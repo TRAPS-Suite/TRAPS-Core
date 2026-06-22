@@ -1,0 +1,14 @@
+# Henry Sommer
+# June 22, 2026
+
+# 1. Get the absolute path of the directory where this script lives
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# 2. Loop through all files in that specific directory
+for f in "$SCRIPT_DIR"/*; do
+  if [ -f "$f" ] && [ "$(basename "$f")" != "build-all" ]; then
+        echo "Processing file: $f"
+        # Add your commands here
+	$f
+    fi
+done

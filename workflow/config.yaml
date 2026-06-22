@@ -1,9 +1,7 @@
 run_name: "Initial Run Test"
 
 indir: "/work/crosslab/hsommer/syntax_testing"
-index_dir: "/work/crosslab/hsommer/TRAPS/indexes/bwamem2_indexes/NC_009942-1"
 outdir: "/work/crosslab/hsommer/run4"
-containers: "/work/crosslab/hsommer/TRAPS/containers"
 workDir: outdir
 references: "two_refs.csv"
 
