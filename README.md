@@ -30,7 +30,7 @@ Requirements:
 
 Clone the GitHub Repo:
 ```bash
-git clone -b release/v6.0.0 https://github.com/henry-j-sommer/TRAPS.git
+git clone -b dev https://github.com/henry-j-sommer/TRAPS.git
 ```
 Navigate to the workflow directory in your new `TRAPS` folder.
 
