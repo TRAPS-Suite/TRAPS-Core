@@ -3,7 +3,7 @@ run_name: "Initial Run Test"
 indir: "/work/crosslab/hsommer/syntax_testing"
 outdir: "/work/crosslab/hsommer/run4"
 workDir: outdir
-references: "two_refs.csv"
+references: "/work/crosslab/hsommer/TRAPS/workflow/two_refs.csv"
 
 cpus: 12
 
