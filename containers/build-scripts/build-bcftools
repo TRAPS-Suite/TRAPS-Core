@@ -1,0 +1,8 @@
+# Build bcftools Container
+#!/bin/bash
+set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEF_FILE="${SCRIPT_DIR}/../bcftools.def"
+SIF_FILE="${SCRIPT_DIR}/../bcftools.sif"
+
+apptainer build $SIF_FILE $DEF_FILE 

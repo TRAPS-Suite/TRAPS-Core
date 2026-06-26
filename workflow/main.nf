@@ -1,6 +1,6 @@
 println "========================================="
 println "  TRAPS  "
-println "  v6.0.0   "
+println "  v6.1.0   "
 println "  Date: ${new Date()}                     "
 println "========================================="
 println '"To know how to wonder and question is '
@@ -19,7 +19,7 @@ include {FASTP} from "${tool_modules}/fastp/main.nf"
 include {BWAMEM2_INDEX; BWAMEM2} from "${tool_modules}/bwamem2/main.nf"
 include {DEDUPLICATE} from "${tool_modules}/deduplicate/main.nf"
 include {COMPILE_METRICS_SHEET} from "${metrics_modules}/main.nf"
-
+include {BED_MASK; VARIANT_CALL; GENERATE_CONSENSUS} from "${tool_modules}/variant_calling/main.nf"
 workflow {
     // sample input channel def
     def sample_input_ch = Channel
@@ -57,6 +57,14 @@ workflow {
     def deduped_channel = DEDUPLICATE.out.marked_sxr.collect()
 
     COMPILE_METRICS_SHEET(deduped_channel) | view()
+
+    VARIANT_CALL(DEDUPLICATE.out.marked_sxr)
+
+    BED_MASK(DEDUPLICATE.out.marked_sxr)
+
+    GENERATE_CONSENSUS(VARIANT_CALL.out.variants_out, BED_MASK.out.mask_out)
+
+
 
 
 }
