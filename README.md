@@ -15,6 +15,7 @@ TRAPS is a scalable, highly customizable, and user friendly Nextflow pipeline fo
 - **Built In Analyzation** Downstream consensus generation, coverage statistics
 - **Scalable** Input as many samples and references as needed
 - **Sensitive** TRAPS analyzes every sample for every reference, ensuring that both infections and coinfections are detected
+- **Phylogenetic Mapping**
 
 ### Upcoming Features
 - **Annotation** TRAPS transfers annotations from some references to the final output
