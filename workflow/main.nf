@@ -20,6 +20,7 @@ include {BWAMEM2_INDEX; BWAMEM2} from "${tool_modules}/bwamem2/main.nf"
 include {DEDUPLICATE} from "${tool_modules}/deduplicate/main.nf"
 include {COMPILE_METRICS_SHEET} from "${metrics_modules}/main.nf"
 include {BED_MASK; VARIANT_CALL; GENERATE_CONSENSUS} from "${tool_modules}/variant_calling/main.nf"
+include {ADD_TO_ALIGNMENT; RECOMPILE_TREE} from "${tool_modules}/phylogenetics/main.nf"
 workflow {
     // sample input channel def
     def sample_input_ch = Channel
@@ -47,7 +48,7 @@ workflow {
 
     def sxr_channel = FASTP.out.reads.combine(reference_input_ch)
         .map {sample_meta, reads, ref_name_ext, ref_name_formatted, ref_path ->
-            tuple(sample_meta, reads, ref_name_formatted, ref_path)
+            return [ sample_meta, reads, ref_name_formatted, ref_path ] 
         }
 
     BWAMEM2(sxr_channel)
@@ -62,10 +63,16 @@ workflow {
 
     BED_MASK(DEDUPLICATE.out.marked_sxr)
 
+    def pre_consensus = VARIANT_CALL.out.variants_out.join(BED_MASK.out.mask_out)
+
+    pre_consensus.view()
+
     GENERATE_CONSENSUS(VARIANT_CALL.out.variants_out, BED_MASK.out.mask_out)
 
+    ADD_TO_ALIGNMENT(GENERATE_CONSENSUS.out.consensus_out)
 
+    def added_alignment = ADD_TO_ALIGNMENT.out.running.collect()
 
+    RECOMPILE_TREE(added_alignment)
 
 }
-    

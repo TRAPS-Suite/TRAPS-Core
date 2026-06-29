@@ -1,7 +1,7 @@
 run_name: "Initial Run Test"
 
 indir: "/work/crosslab/hsommer/syntax2"
-outdir: "/work/crosslab/hsommer/run6"
+outdir: "/work/crosslab/hsommer/run7"
 workDir: outdir
 references: "/work/crosslab/hsommer/TRAPS/workflow/two_refs.csv"
 

@@ -55,13 +55,14 @@ process GENERATE_CONSENSUS {
     tuple val(meta), path(variants), path(variants_index), path(ref_path), val(ref_name)
     tuple val(meta2), path(mask)
     output:
-    tuple val(meta), path("*consensus.fasta")
+    tuple val(meta), path("*consensus.fasta"), val(ref_name), emit: consensus_out
     script:
     """
     bcftools consensus \
     -f ${ref_path} \
     -m ${mask} \
     ${variants} \
-    > ${meta.id}_${ref_name}_consensus.fasta
+    > ${meta.id}_${ref_name}_consensus_bh.fasta
+    awk '/^>/ {print ">Body14ILLHC1_west_nile_virus"; next} {print}' Body14ILLHC1_west_nile_virus_consensus_bh.fasta > Body14ILLHC1_west_nile_virus_consensus.fasta
     """
 }
