@@ -41,8 +41,8 @@ references = [item.replace(" ","_").lower() for item in first_column]
 fastp_files = glob.glob(fastp_dir + "/*.trimmed.fastq.gz")
 
 fastp_files = [item.split('/')[-1] for item in fastp_files]
-sample_names = [item.replace(".trimmed.fastq.gz","") for item in fastp_files]
 
+sample_names = [item.replace(".trimmed.fastq.gz","") for item in fastp_files]
     
 columns = ["sample", "reference", "total", "mapped_reads", "unmapped_reads", "duplicate_reads"]
 # Create the DataFrame

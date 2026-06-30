@@ -1,0 +1,8 @@
+# Build Phylogenetics Container
+#!/bin/bash
+set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEF_FILE="${SCRIPT_DIR}/../phylogenetics.def"
+SIF_FILE="${SCRIPT_DIR}/../phylogenetics.sif"
+
+apptainer build $SIF_FILE $DEF_FILE 
