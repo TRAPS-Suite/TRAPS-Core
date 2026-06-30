@@ -1,24 +1,23 @@
-process CONCATENATE_REFERENCES {
-    publishDir "${params.outdir}/bwamem2_indexes", mode: 'copy'
+process CLEAN_REF {
+    publishDir "${params.outdir}/bwamem2", mode: 'copy'
     
     input:
-    path(reference_files)
-    
+    tuple val(ref_name), val(ref_name_formatted), path(ref_path)
+
     output:
-    path("concatenated_references.fasta"), emit: fasta
+    path("*.fasta"), emit: fasta
     
     script:
     """
-    cat ${reference_files} > concatenated_references.fasta
+    sed 's/^>.*/>${ref_name_formatted}/' ${ref_path} > ${ref_name_formatted}.fasta
     """
 }
 
 process BWAMEM2_INDEX {
-    tag "$ref_name_formatted"
-    publishDir "${params.outdir}/bwamem2_indexes", mode: 'copy'
+    publishDir "${params.outdir}/bwamem2", mode: 'copy'
 
     input:
-    tuple val(ref_name), val(ref_name_formatted), path(ref_path)
+    path(fasta)
 
     output:
     tuple path("*.amb"),
@@ -30,7 +29,8 @@ process BWAMEM2_INDEX {
 
     script:
     """
-    bwa-mem2 index -p ${ref_name_formatted} ${ref_path}
+    cat ${fasta} > combined_fasta.fasta
+    bwa-mem2 index -p index combined_fasta.fasta
     """
 }
 
@@ -40,10 +40,10 @@ process BWAMEM2 {
     publishDir "${params.outdir}/bwamem2", mode: 'copy'
 
     input:
-    tuple val(meta), path(reads), val(ref_name_formatted), path(ref_path)
+    tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path("*.bam"), path("*.bam.bai"), val(ref_name_formatted), path(ref_path), emit: aligned_sxr
+    tuple val(meta), path("*.bam"), path("*.bam.bai"), emit: aligned
 
     script:
     def paired = reads instanceof List && reads.size() == 2
@@ -53,10 +53,10 @@ process BWAMEM2 {
     bwa-mem2 mem \\
         -t ${task.cpus} \\
         -R '@RG\tID:Group1\tSM:SampleA\tPL:ILLUMINA\tLB:Lib1' \\
-        -p "${params.outdir}/bwamem2_indexes/${ref_name_formatted}" \\
+        -p "${params.outdir}/bwamem2/index" \\
         ${read_args} | \\
-        samtools sort -@ ${task.cpus} -o ${meta.id}_${ref_name_formatted}.sorted.bam
+        samtools sort -@ ${task.cpus} -o ${meta.id}.sorted.bam
     
-    samtools index ${meta.id}_${ref_name_formatted}.sorted.bam
+    samtools index ${meta.id}.sorted.bam
     """
 }

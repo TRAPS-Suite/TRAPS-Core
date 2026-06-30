@@ -1,6 +1,6 @@
 println "========================================="
 println "  TRAPS  "
-println "  v6.1.0   "
+println "  v6.4.0   "
 println "  Date: ${new Date()}                     "
 println "========================================="
 println '"To know how to wonder and question is '
@@ -16,7 +16,7 @@ tool_modules = "./modules/cross-lab/tools"
 metrics_modules = "./modules/cross-lab/metrics"
 
 include {FASTP} from "${tool_modules}/fastp/main.nf"
-include {BWAMEM2_INDEX; BWAMEM2} from "${tool_modules}/bwamem2/main.nf"
+include {BWAMEM2_INDEX; BWAMEM2; CLEAN_REF} from "${tool_modules}/bwamem2/main.nf"
 include {DEDUPLICATE} from "${tool_modules}/deduplicate/main.nf"
 include {COMPILE_METRICS_SHEET} from "${metrics_modules}/main.nf"
 include {BED_MASK; VARIANT_CALL; GENERATE_CONSENSUS} from "${tool_modules}/variant_calling/main.nf"
@@ -40,32 +40,14 @@ workflow {
             def ref_name_normalized = row.ref_name_external.replaceAll(/\s+/, '_').toLowerCase()
             tuple( row.ref_name_external, ref_name_normalized, file(row.ref_path)) 
         }
+
+    CLEAN_REF(reference_input_ch)
     // indexing references
-    BWAMEM2_INDEX(reference_input_ch)
+    BWAMEM2_INDEX(CLEAN_REF.out.fasta.collect())
     // Run FASTP
     FASTP(sample_input_ch)
 
-    def sxr_channel = FASTP.out.reads.combine(reference_input_ch)
-        .map {sample_meta, reads, ref_name_ext, ref_name_formatted, ref_path ->
-            tuple(sample_meta, reads, ref_name_formatted, ref_path)
-        }
+    BWAMEM2(FASTP.out.reads)
 
-    BWAMEM2(sxr_channel)
-    
-    DEDUPLICATE(BWAMEM2.out.aligned_sxr)
-
-    def deduped_channel = DEDUPLICATE.out.marked_sxr.collect()
-
-    COMPILE_METRICS_SHEET(deduped_channel) | view()
-
-    VARIANT_CALL(DEDUPLICATE.out.marked_sxr)
-
-    BED_MASK(DEDUPLICATE.out.marked_sxr)
-
-    GENERATE_CONSENSUS(VARIANT_CALL.out.variants_out, BED_MASK.out.mask_out)
-
-
-
-
+    DEDUPLICATE(BWAMEM2.out.aligned)
 }
-    

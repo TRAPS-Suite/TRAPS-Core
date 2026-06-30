@@ -8,7 +8,8 @@ references: "/work/crosslab/hsommer/TRAPS/workflow/two_refs.csv"
 cpus: 12
 
 qc:
-  min_depth: 10
+  min_breadth_percent: 90
+  min_depth: 5
 
 single_end: true
 sequencing_tech: "illumina"
