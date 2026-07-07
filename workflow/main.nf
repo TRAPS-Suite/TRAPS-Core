@@ -20,6 +20,7 @@ include {BWAMEM2_INDEX; BWAMEM2; CLEAN_REF} from "${tool_modules}/bwamem2/main.n
 include {DEDUPLICATE} from "${tool_modules}/deduplicate/main.nf"
 include {COMPILE_METRICS_SHEET} from "${metrics_modules}/main.nf"
 include {BED_MASK; VARIANT_CALL; GENERATE_CONSENSUS} from "${tool_modules}/variant_calling/main.nf"
+include {BUNDLE_RUN} from "${tool_modules}/bundling/main.nf"
 workflow {
     // sample input channel def
     def sample_input_ch = Channel
@@ -47,7 +48,11 @@ workflow {
     // Run FASTP
     FASTP(sample_input_ch)
 
-    BWAMEM2(FASTP.out.reads)
+    BWAMEM2(FASTP.out.reads, BWAMEM2_INDEX.out.bm2_index_bundle)
 
     DEDUPLICATE(BWAMEM2.out.aligned)
+
+    
+    BUNDLE_RUN(DEDUPLICATE.out.marked_bam.collect())
+
 }

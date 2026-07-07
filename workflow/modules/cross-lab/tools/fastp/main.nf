@@ -4,7 +4,7 @@ process FASTP {
     
     input:
     tuple val(meta), path(reads)
-    
+        
     output:
     tuple val(meta), path("*.trimmed.fastq.gz"), emit: reads
     path("*.json"), emit: report
