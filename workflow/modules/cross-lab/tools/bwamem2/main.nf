@@ -42,6 +42,12 @@ process BWAMEM2 {
     input:
     tuple val(meta), path(reads)
 
+    tuple path(amb),
+        path(ann),
+        path(pac),
+        path(ott),
+        path(bit)
+
     output:
     tuple val(meta), path("*.bam"), path("*.bam.bai"), emit: aligned
 
