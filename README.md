@@ -16,10 +16,11 @@ TRAPS is a scalable, highly customizable, and user friendly Nextflow pipeline fo
 - **Scalable** Input as many samples and references as needed
 - **Sensitive** TRAPS analyzes every sample for every reference, ensuring that both infections and coinfections are detected
 - **Phylogenetic Mapping**
+- **Run Management** Runs are saved in a custom system using the `.tar` format
+
 
 ### Upcoming Features
 - **Annotation** TRAPS transfers annotations from some references to the final output
-- **Run Management** Runs are saved in a custom system using the `.tar` format
 - **Mutation Reporting** Confidence scoring of amino acid mutations, with an option to add mutations to "flag"
 - **Reports** An interactive web app enables graphical analysis of the data collected
 
