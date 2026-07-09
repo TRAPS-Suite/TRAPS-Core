@@ -1,26 +1,21 @@
 process SPLIT_TO_REFS {
     tag "$meta.id"
 
-    publishDir "${params.outdir}/split", mode: 'copy'
+    publishDir "${params.outdir}/split_bams", mode: 'copy'
 
     input:
     tuple val(meta), path(bam), path(bai)
-    path(refs_csv)
 
     output:
-    tuple val(meta), path("*.sorted.bam"), path("*.sorted.bam.bai"),
+    tuple val(meta), path("*.sorted.marked.bam"), path("*.sorted.marked.bam.bai"),
     emit: split_bams
 
     script:
     """
-    while IFS=',' read -r col1 col2 col3 || [ -n "$col1" ]; do
-    # Skip the header row if your file has one
-    if [ "$col1" = "ref_name_internal" ]; then continue; fi
-    
-    # Do something with the variables
-    echo "Processing row: Column 1 is $col1, Column 2 is $col2"
-    
-    done < ${refs_csv}
+    for chr in \$(samtools view -H ${bam} | grep "^@SQ" | cut -f 2 | cut -f 2- -d ':'); do
+        samtools view -bh ${bam} "\$chr" > "\${chr}.sorted.marked.bam"
+        samtools index "\${chr}.sorted.marked.bam"
+    done
     """
 
     // bam

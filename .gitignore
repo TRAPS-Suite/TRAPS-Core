@@ -50,6 +50,4 @@ output/
 indexes/
 *.sif
 
-*.def
-
 .vscode/

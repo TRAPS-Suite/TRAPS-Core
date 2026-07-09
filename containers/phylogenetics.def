@@ -1,0 +1,86 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%help
+    Phylogenetics analysis container with IQ-TREE 2, MAFFT, and RAxML-NG 2.0.2
+    
+    Usage:
+        apptainer run phylo.sif iqtree2 [options]
+        apptainer run phylo.sif mafft [options]
+        apptainer run phylo.sif raxml-ng [options]
+
+%labels
+    Author "Your Name"
+    Version "2.0"
+    RAxMLNG "2.0.2"
+    IQTREE "2.2.0"
+
+%environment
+    export PATH=/opt/iqtree/bin:/opt/raxml-ng-dir:/opt/epa-ngdir:$PATH
+    export LC_ALL=C
+    export OMP_NUM_THREADS=4
+
+
+%post
+    # Update system
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+        unzip \
+        build-essential \
+        cmake \
+        git \
+        libboost-dev \
+        libboost-system-dev \
+        libboost-filesystem-dev \
+        libbz2-dev \
+        zlib1g-dev \
+        bison \
+        flex
+    
+    # Install MAFFT (alignment)
+    apt-get update && apt-get install -y mafft && rm -rf /var/lib/apt/lists/*
+    
+    # Install IQ-TREE 2
+    cd /opt
+    wget https://github.com/iqtree/iqtree2/releases/download/v2.2.0/iqtree-2.2.0-Linux.tar.gz
+    tar -xzf iqtree-2.2.0-Linux.tar.gz
+    mv iqtree-2.2.0-Linux iqtree
+    rm iqtree-2.2.0-Linux.tar.gz
+    chmod +x /opt/iqtree/bin/iqtree2
+    
+    # Install RAxML-NG 2.0.2 (pre-built binary)
+    cd /opt
+    wget https://codeberg.org/amkozlov/raxml-ng/releases/download/2.0.2/raxml-ng_v2.0.2_linux_x86_64.zip
+    unzip raxml-ng_v2.0.2_linux_x86_64.zip
+    mkdir -p raxml-ng-dir
+    mv raxml-ng raxml-ng-dir/raxml-ng
+    chmod +x /opt/raxml-ng-dir/raxml-ng
+    rm raxml-ng_v2.0.2_linux_x86_64.zip
+ 
+    # Install EPA-NG (from source - fix git ownership issue)
+    cd /opt
+    wget https://github.com/pierrebarbera/epa-ng/releases/download/v0.3.6/epa-ng
+    mkdir -p epa-ngdir
+    mv epa-ng epa-ngdir
+    chmod +x /opt/epa-ngdir/epa-ng
+
+    cd /opt
+    wget https://github.com/weizhongli/cdhit/releases/download/V4.8.1/cd-hit-v4.8.1-2019-0228.tar.gz
+    tar -zxvf cd-hit-v4.8.1-2019-0228.tar.gz
+    cd cd-hit-v4.8.1-2019-0228
+    make openmp=yes  MAX_SEQ=10000000
+    make install
+
+
+%runscript
+    exec "$@"
+
+%startscript
+    echo "Phylogenetics Suite Ready!"
+    echo ""
+    echo "Available tools:"
+    iqtree2 --version 2>&1 | head -n1
+    mafft --version 2>&1 | head -n1
+    raxml-ng --version 2>&1 | head -n1
