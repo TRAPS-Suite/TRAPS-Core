@@ -15,7 +15,6 @@ TRAPS is a scalable, highly customizable, and user friendly Nextflow pipeline fo
 - **Built In Analyzation** Downstream consensus generation, coverage statistics
 - **Scalable** Input as many samples and references as needed
 - **Sensitive** TRAPS analyzes every sample for every reference, ensuring that both infections and coinfections are detected
-- **Phylogenetic Mapping**
 - **Run Management** Runs are saved in a custom system using the `.tar` format
 
 
@@ -32,12 +31,12 @@ Requirements:
 
 Clone the GitHub Repo:
 ```bash
-git clone -b dev https://github.com/henry-j-sommer/TRAPS.git
+git clone -b dev https://github.com/TRAPS-Suite/TRAPS-Core.git
 ```
-Navigate to the workflow directory in your new `TRAPS` folder.
+Navigate to the workflow directory in your new `TRAPS-Core` folder.
 
 ```bash
-cd TRAPS/workflow
+cd TRAPS-Core/workflow
 ```
 
 Run the script to build containers
@@ -47,8 +46,8 @@ Run the script to build containers
 
 It is recommended to store your runs in a dedicated folder. Create a new folder, and remember the name.
 
-Make sure your `.FASTQ` files are stored in a dedicated directory and follow the [formatting guidelines]([url](https://github.com/henry-j-sommer/TRAPS.git)).
-Make sure your [reference configuration file]([url](https://github.com/henry-j-sommer/TRAPS.git)) is created.
+Make sure your `.FASTQ` files are stored in a dedicated directory and follow the [formatting guidelines]([url](https://github.com/TRAPS-Suite/TRAPS-Core.git)).
+Make sure your [reference configuration file]([url](https://github.com/TRAPS-Suite/TRAPS-Core.git)) is created.
 
 
 
