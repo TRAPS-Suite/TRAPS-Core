@@ -21,6 +21,8 @@ include {DEDUPLICATE} from "${tool_modules}/deduplicate/main.nf"
 include {COMPILE_METRICS_SHEET} from "${metrics_modules}/main.nf"
 include {BED_MASK; VARIANT_CALL; GENERATE_CONSENSUS} from "${tool_modules}/variant_calling/main.nf"
 include {BUNDLE_RUN} from "${tool_modules}/bundling/main.nf"
+include {SPLIT_TO_REFS} from "${tool_modules}/split_to_refs/main.nf"
+include {CONSENSUS} from "${tool_modules}/ivar/main.nf"
 workflow {
     // sample input channel def
     def sample_input_ch = Channel
@@ -52,7 +54,10 @@ workflow {
 
     DEDUPLICATE(BWAMEM2.out.aligned)
 
+    SPLIT_TO_REFS(DEDUPLICATE.out.marked_bam)
     
-    BUNDLE_RUN(DEDUPLICATE.out.marked_bam.collect())
+    CONSENSUS(SPLIT_TO_REFS.out.split_bams)
+
+    //BUNDLE_RUN(DEDUPLICATE.out.marked_bam.collect())
 
 }
