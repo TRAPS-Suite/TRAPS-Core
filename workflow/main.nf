@@ -54,9 +54,11 @@ workflow {
 
     DEDUPLICATE(BWAMEM2.out.aligned)
 
-    SPLIT_TO_REFS(DEDUPLICATE.out.marked_bam)
+    //SPLIT_TO_REFS(DEDUPLICATE.out.marked_bam)
     
-    CONSENSUS(SPLIT_TO_REFS.out.split_bams)
+    //CONSENSUS(SPLIT_TO_REFS.out.split_bams)
+
+    COMPILE_METRICS_SHEET(DEDUPLICATE.out.marked_bam.collect())
 
     //BUNDLE_RUN(DEDUPLICATE.out.marked_bam.collect())
 

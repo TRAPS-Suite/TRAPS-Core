@@ -1,7 +1,7 @@
 run_name: "my_run"
 
-indir: "/work/crosslab/hsommer/syntax2"
-outdir: "/work/crosslab/hsommer/run10"
+indir: "/work/crosslab/hsommer/ots_data_2"
+outdir: "/work/crosslab/hsommer/run11"
 workDir: outdir
 references: "/work/crosslab/hsommer/TRAPS/workflow/two_refs.csv"
 
